@@ -77,7 +77,6 @@ class _AuthState extends State<Auth> {
         idToken: googleSignInAuthentication.idToken,
       );
       UserCredential _ = await _auth.signInWithCredential(credential);
-      //print('userCredentials: $userCredential');
     } on PlatformException catch (error) {
       widget.showSnackBar(context, error.code);
       print(error);
@@ -149,7 +148,6 @@ class _AuthState extends State<Auth> {
             FocusScope.of(context).unfocus();
           },
           child: Stack(
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: () {
@@ -198,7 +196,6 @@ class _AuthState extends State<Auth> {
                                   children: [
                                     TextFormField(
                                       key: Key('Email'),
-                                      //style: TextStyle(),
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.vertical(
@@ -224,7 +221,6 @@ class _AuthState extends State<Auth> {
                                     ),
                                     TextFormField(
                                       key: Key('Password'),
-                                      //style: TextStyle(),
                                       decoration: InputDecoration(
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.vertical(
@@ -251,7 +247,6 @@ class _AuthState extends State<Auth> {
                                     if (!signIn)
                                       TextFormField(
                                         key: Key('Confirm Password'),
-                                        //style: TextStyle(),
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.vertical(
