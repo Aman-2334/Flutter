@@ -10,6 +10,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 /*Download the SVG given in the folder, put it in assets folder and add it in pubspec.yaml file*/
 
+/*Google Fonts you will need
+--StardosStencil
+--Raleway */
+
 /*Custom SnackBar*/
 
 class ShowSnackBar {
@@ -176,7 +180,7 @@ class _AuthState extends State<Auth> {
                             color: Colors.white,
                             child: Center(
                               child: Text(
-                                'Meeting Manager',
+                                'Authentication',
                                 style: TextStyle(fontSize: 28, fontFamily: 'StardosStencil'),
                               ),
                             ),
