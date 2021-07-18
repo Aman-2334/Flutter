@@ -61,93 +61,18 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         ),
         backgroundColor: const Color(0xFF0F044C),
         body: SafeArea(
-            child: Stack(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              child: RotationTransition(
-                turns: turns,
-                child: const GamePad(
-                  size: 300,
-                ),
+          child: Container(
+            alignment: Alignment.center,
+            child: RotationTransition(
+              turns: turns,
+              child: const GamePad(
+                size: 300,
               ),
             ),
-            Opacity(
-              opacity: 0.0,
-              child: Container(
-                alignment: Alignment.center,
-                child: const Vibration(
-                  size: 300,
-                ),
-              ),
-            )
-          ],
-        )),
+          ),
+        ),
       ),
     );
-  }
-}
-
-class Vibration extends StatefulWidget {
-  final double size;
-  const Vibration({Key? key, this.size = 400}) : super(key: key);
-
-  @override
-  _VibrationState createState() => _VibrationState();
-}
-
-class _VibrationState extends State<Vibration> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F044C),
-      width: 400,
-      height: 400,
-      child: CustomPaint(
-        painter: VibrationPattern(widget.size),
-      ),
-    );
-  }
-}
-
-class VibrationPattern extends CustomPainter {
-  final double size;
-  double controllerWidth = 0.0;
-  double controllerHeight = 0.0;
-
-  VibrationPattern(this.size) {
-    controllerWidth = 0.7 * size;
-    controllerHeight = 0.3 * size;
-  }
-
-  void vibrationPattern(Canvas canvas, Size size, c, radius) {
-    final vibrationPatternBrush = Paint()
-      ..color = const Color(0xFFEEEEEE)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = controllerHeight * controllerWidth * 0.00055
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35), pi / 6,
-        -pi / 3, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05), pi / 5,
-        -2 * pi / 5, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35),
-        5 * pi / 6, pi / 3, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05),
-        4 * pi / 5, 2 * pi / 5, false, vibrationPatternBrush);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final x = size.width / 2;
-    final y = size.height / 2;
-    final radius = min(x, y);
-    final c = Offset(x, y);
-    vibrationPattern(canvas, size, c, radius);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
   }
 }
 
@@ -171,6 +96,8 @@ class _GamePadState extends State<GamePad> {
     );
   }
 }
+
+
 
 class GamePadPainter extends CustomPainter {
   final double size;
@@ -249,6 +176,22 @@ class GamePadPainter extends CustomPainter {
     canvas.drawPath(path, wireBrush);
   }
 
+  void vibrationPattern(Canvas canvas, Size size, c, radius) {
+    final vibrationPatternBrush = Paint()
+      ..color = const Color(0xFFEEEEEE)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = controllerHeight * controllerWidth * 0.00055
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35), pi / 6,
+        -pi / 3, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05), pi / 5,
+        -2 * pi / 5, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35),
+        5 * pi / 6, pi / 3, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05),
+        4 * pi / 5, 2 * pi / 5, false, vibrationPatternBrush);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     final x = size.width / 2;
@@ -260,6 +203,7 @@ class GamePadPainter extends CustomPainter {
     functionControllers(canvas, size, x, y);
     movementControllers(canvas, size, x, y);
     wire(canvas, size, x, y);
+    vibrationPattern(canvas, size, c, radius);
   }
 
   @override
@@ -267,3 +211,66 @@ class GamePadPainter extends CustomPainter {
     return true;
   }
 }
+
+/*class Vibration extends StatefulWidget {
+  final double size;
+  const Vibration({Key? key, this.size = 400}) : super(key: key);
+
+  @override
+  _VibrationState createState() => _VibrationState();
+}
+
+class _VibrationState extends State<Vibration> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFF0F044C),
+      width: 400,
+      height: 400,
+      child: CustomPaint(
+        painter: VibrationPattern(widget.size),
+      ),
+    );
+  }
+}
+
+class VibrationPattern extends CustomPainter {
+  final double size;
+  double controllerWidth = 0.0;
+  double controllerHeight = 0.0;
+
+  VibrationPattern(this.size) {
+    controllerWidth = 0.7 * size;
+    controllerHeight = 0.3 * size;
+  }
+
+  void vibrationPattern(Canvas canvas, Size size, c, radius) {
+    final vibrationPatternBrush = Paint()
+      ..color = const Color(0xFFEEEEEE)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = controllerHeight * controllerWidth * 0.00055
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35), pi / 6,
+        -pi / 3, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05), pi / 5,
+        -2 * pi / 5, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35),
+        5 * pi / 6, pi / 3, false, vibrationPatternBrush);
+    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05),
+        4 * pi / 5, 2 * pi / 5, false, vibrationPatternBrush);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final x = size.width / 2;
+    final y = size.height / 2;
+    final radius = min(x, y);
+    final c = Offset(x, y);
+    vibrationPattern(canvas, size, c, radius);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}*/
