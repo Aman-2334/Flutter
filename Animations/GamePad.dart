@@ -1,3 +1,8 @@
+/*
+3rd party packages used
+rainbow_color: ^2.0.1
+*/
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:math';
