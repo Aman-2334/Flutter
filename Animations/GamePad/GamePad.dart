@@ -5,9 +5,17 @@ rainbow_color: ^2.0.1
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:rainbow_color/rainbow_color.dart';
 import 'dart:math';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.white,
+    statusBarIconBrightness: Brightness.dark,
+  ));
   runApp(const MyApp());
 }
 
@@ -27,19 +35,19 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     vibrationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2))
-          ..repeat();
+    AnimationController(vsync: this, duration: const Duration(seconds: 2))
+      ..repeat();
     turns = Tween<double>(begin: 0, end: 0.1)
         .chain(TweenSequence([
-          TweenSequenceItem<double>(
-              tween: Tween<double>(begin: 0, end: 0.1), weight: 1),
-          TweenSequenceItem<double>(
-              tween: Tween<double>(begin: 0.1, end: -0.1), weight: 2),
-          TweenSequenceItem<double>(
-              tween: Tween<double>(begin: -0.1, end: 0), weight: 1),
-        ]))
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 0, end: 0.1), weight: 1),
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 0.1, end: -0.1), weight: 2),
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: -0.1, end: 0), weight: 1),
+    ]))
         .animate(
-            CurvedAnimation(parent: vibrationController, curve: Curves.linear));
+        CurvedAnimation(parent: vibrationController, curve: Curves.linear));
   }
 
   @override
@@ -51,6 +59,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -59,12 +68,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.normal,
-                color: Color(0xFFEEEEEE)),
+                color: Colors.black),
           ),
           elevation: 0,
-          backgroundColor: const Color(0xFF0F044C),
+          backgroundColor: Colors.white,
         ),
-        backgroundColor: const Color(0xFF0F044C),
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Container(
             alignment: Alignment.center,
@@ -83,33 +92,63 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
 class GamePad extends StatefulWidget {
   final double size;
-  const GamePad({Key? key, this.size = 400}) : super(key: key);
+  const GamePad({
+    Key? key,
+    this.size = 400,
+  }) : super(key: key);
   @override
   _GamePadState createState() => _GamePadState();
 }
 
-class _GamePadState extends State<GamePad> {
+class _GamePadState extends State<GamePad> with SingleTickerProviderStateMixin {
+  late AnimationController colorController;
+  late Animation<Color> color;
+
+  @override
+  void initState() {
+    super.initState();
+    colorController =
+    AnimationController(vsync: this, duration: const Duration(seconds: 3))
+      ..repeat();
+    color = RainbowColorTween([
+      Colors.white,
+      Colors.white,
+      const Color(0xFF7DEDFF),
+      const Color(0xFF141E61),
+      const Color(0xFF0F044C),
+      const Color(0xFF141E61),
+      const Color(0xFF7DEDFF),
+      Colors.white,
+      Colors.white,
+    ]).animate(CurvedAnimation(parent: colorController, curve: Curves.linear));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    colorController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0F044C),
+      color: Colors.white,
       width: 400,
       height: 400,
       child: CustomPaint(
-        painter: GamePadPainter(widget.size),
+        painter: GamePadPainter(widget.size, color),
       ),
     );
   }
 }
 
-
-
 class GamePadPainter extends CustomPainter {
   final double size;
   double controllerWidth = 0.0;
   double controllerHeight = 0.0;
+  late Animation<Color> color;
 
-  GamePadPainter(this.size) {
+  GamePadPainter(this.size, this.color) {
     controllerWidth = 0.7 * size;
     controllerHeight = 0.3 * size;
   }
@@ -183,7 +222,7 @@ class GamePadPainter extends CustomPainter {
 
   void vibrationPattern(Canvas canvas, Size size, c, radius) {
     final vibrationPatternBrush = Paint()
-      ..color = const Color(0xFFEEEEEE)
+      ..color = color.value
       ..style = PaintingStyle.stroke
       ..strokeWidth = controllerHeight * controllerWidth * 0.00055
       ..strokeCap = StrokeCap.round;
@@ -216,66 +255,3 @@ class GamePadPainter extends CustomPainter {
     return true;
   }
 }
-
-/*class Vibration extends StatefulWidget {
-  final double size;
-  const Vibration({Key? key, this.size = 400}) : super(key: key);
-
-  @override
-  _VibrationState createState() => _VibrationState();
-}
-
-class _VibrationState extends State<Vibration> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F044C),
-      width: 400,
-      height: 400,
-      child: CustomPaint(
-        painter: VibrationPattern(widget.size),
-      ),
-    );
-  }
-}
-
-class VibrationPattern extends CustomPainter {
-  final double size;
-  double controllerWidth = 0.0;
-  double controllerHeight = 0.0;
-
-  VibrationPattern(this.size) {
-    controllerWidth = 0.7 * size;
-    controllerHeight = 0.3 * size;
-  }
-
-  void vibrationPattern(Canvas canvas, Size size, c, radius) {
-    final vibrationPatternBrush = Paint()
-      ..color = const Color(0xFFEEEEEE)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = controllerHeight * controllerWidth * 0.00055
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35), pi / 6,
-        -pi / 3, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05), pi / 5,
-        -2 * pi / 5, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.35),
-        5 * pi / 6, pi / 3, false, vibrationPatternBrush);
-    canvas.drawArc(Rect.fromCircle(center: c, radius: radius / 1.05),
-        4 * pi / 5, 2 * pi / 5, false, vibrationPatternBrush);
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final x = size.width / 2;
-    final y = size.height / 2;
-    final radius = min(x, y);
-    final c = Offset(x, y);
-    vibrationPattern(canvas, size, c, radius);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}*/
